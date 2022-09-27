@@ -1,116 +1,101 @@
 <template>
-    <div>
-        <div class="switch-language">
-            <el-dropdown size="large" :hide-timeout="50" placement="bottom-end" :hide-on-click="true">
-                <Icon name="fa fa-globe" color="var(--el-text-color-secondary)" size="28" />
-                <template #dropdown>
-                    <el-dropdown-menu class="chang-lang">
-                        <el-dropdown-item v-for="item in config.lang.langArray" :key="item.name" @click="editDefaultLang(item.name)">
-                            {{ item.value }}
-                        </el-dropdown-item>
-                    </el-dropdown-menu>
-                </template>
-            </el-dropdown>
-        </div>
-        <div @contextmenu.stop="" id="bubble" class="bubble">
-            <canvas id="bubble-canvas" class="bubble-canvas"></canvas>
-        </div>
-        <div class="login">
-            <div class="login-box">
-                <div class="head">
-                    <img src="~assets/login-header.png" alt="" />
-                </div>
-                <div class="form">
-                    <img class="profile-avatar" src="~assets/avatar.png" alt="" />
-                    <div class="content">
-                        <el-form @keyup.enter="onSubmit(formRef)" ref="formRef" :rules="rules" size="large" :model="form">
-                            <el-form-item prop="username">
-                                <el-input
-                                    ref="usernameRef"
-                                    type="text"
-                                    clearable
-                                    v-model="form.username"
-                                    :placeholder="t('adminLogin.Please enter an account')"
-                                >
-                                    <template #prefix>
-                                        <Icon name="fa fa-user" class="form-item-icon" size="16" color="var(--el-input-icon-color)" />
-                                    </template>
-                                </el-input>
-                            </el-form-item>
-                            <el-form-item prop="password">
-                                <el-input
-                                    ref="passwordRef"
-                                    v-model="form.password"
-                                    type="password"
-                                    :placeholder="t('adminLogin.Please input a password')"
-                                    show-password
-                                >
-                                    <template #prefix>
-                                        <Icon name="fa fa-unlock-alt" class="form-item-icon" size="16" color="var(--el-input-icon-color)" />
-                                    </template>
-                                </el-input>
-                            </el-form-item>
-                            <el-form-item v-if="state.showCaptcha" prop="captcha">
-                                <el-row class="w100" :gutter="15">
-                                    <el-col :span="16">
-                                        <el-input
-                                            ref="captchaRef"
-                                            type="text"
-                                            :placeholder="t('adminLogin.Please enter the verification code')"
-                                            v-model="form.captcha"
-                                            clearable
-                                            autocomplete="off"
-                                        >
-                                            <template #prefix>
-                                                <Icon name="fa fa-ellipsis-h" class="form-item-icon" size="16" color="var(--el-input-icon-color)" />
-                                            </template>
-                                        </el-input>
-                                    </el-col>
-                                    <el-col :span="8">
-                                        <img
-                                            @click="onChangeCaptcha"
-                                            class="captcha-img"
-                                            :src="buildCaptchaUrl() + '&id=' + state.captchaId"
-                                            alt=""
-                                        />
-                                    </el-col>
-                                </el-row>
-                            </el-form-item>
-                            <el-checkbox v-model="form.keep" :label="t('adminLogin.Hold session')" size="default"></el-checkbox>
-                            <el-form-item>
-                                <el-button :loading="form.loading" class="submit-button" round type="primary" size="large" @click="onSubmit(formRef)">
-                                    {{ t('adminLogin.Sign in') }}
-                                </el-button>
-                            </el-form-item>
-                        </el-form>
-                    </div>
+    <div class="main-container">
+        <section class="sidebar">
+            <div class="sidebar-content">
+                <header>
+                    <a href="#"
+                        ><div class="sidebar-logo-box">
+                            <img src="~assets/logo.png" />
+                            <h3>{{ siteConfig.site_name }}</h3>
+                        </div>
+                    </a>
+                    <h1 class="sidebar-tagline">Build a blue sky</h1>
+                </header>
+                <div class="sidebar-banner">
+                    <div class="sidebar-bg"></div>
                 </div>
             </div>
-        </div>
+        </section>
+        <section class="content">
+            <main>
+                <div class="content-main">
+                    <h2 class="content-title">{{ t('adminLogin.Sign in to') + " " + siteConfig.site_name }}</h2>
+
+                    <el-divider class="content-hr">{{ t('adminLogin.Welcome') }}</el-divider>
+                    <el-form @keyup.enter="onSubmit(formRef)" ref="formRef" :rules="rules" :model="form">
+                        <!-- 账号 -->
+                        <el-form-item prop="username">
+                            <label class="content-label">{{ t('adminLogin.Please enter an account') }}</label>
+                            <el-input v-model="form.username" clearable size="large" autofocus></el-input>
+                        </el-form-item>
+
+                        <!-- 密码 -->
+                        <el-form-item prop="password">
+                            <label class="content-label">{{ t('adminLogin.Please input a password') }}</label>
+                            <el-input v-model="form.password" show-password size="large"></el-input>
+                        </el-form-item>
+
+                        <!-- 验证码 -->
+                        <el-form-item v-if="state.showCaptcha" prop="captcha">
+                            <label class="content-label">{{ t('adminLogin.Please enter the verification code') }}</label>
+                            <div class="content-captcha">
+                                <el-input
+                                    ref="captchaRef"
+                                    v-model="form.captcha"
+                                    autocomplete="off"
+                                    clearable
+                                    size="large"
+                                    type="text"
+                                    class="content-captcha-input"
+                                >
+                                </el-input>
+                                <img
+                                    @click="onChangeCaptcha"
+                                    class="content-captcha-img"
+                                    :src="buildCaptchaUrl() + '&id=' + state.captchaId"
+                                    alt=""
+                                />
+                            </div>
+                        </el-form-item>
+
+                        <!-- 保持会话-->
+                        <el-checkbox v-model="form.keep" :label="t('adminLogin.Hold session')" class="content-remenber"></el-checkbox>
+
+                        <!-- 登录 -->
+                        <el-form-item>
+                            <el-col :span="11">
+                                <el-button type="primary" size="large" class="content-login-btn" @click="onSubmit(formRef)">{{
+                                    t('adminLogin.Sign in')
+                                }}</el-button>
+                            </el-col>
+                        </el-form-item>
+                    </el-form>
+                </div>
+            </main>
+        </section>
     </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, onBeforeUnmount, reactive, ref, nextTick } from 'vue'
-import * as pageBubble from '/@/utils/pageBubble'
-import type { ElForm, ElInput } from 'element-plus'
-import { ElNotification } from 'element-plus'
-import { useI18n } from 'vue-i18n'
-import { editDefaultLang } from '/@/lang/index'
-import { useConfig } from '/@/stores/config'
-import { useAdminInfo } from '/@/stores/adminInfo'
-import { login } from '/@/api/backend'
+import { reactive, ref } from 'vue'
+import { uuid } from '/@/utils/random'
+import { useSiteConfig } from '/@/stores/siteConfig'
 import { buildCaptchaUrl } from '/@/api/common'
-import { uuid } from '../../utils/random'
 import { validatorPassword, validatorAccount } from '/@/utils/validate'
+import { ElForm, ElInput, ElNotification } from 'element-plus'
+import { login } from '/@/api/backend'
+import { useAdminInfo } from '/@/stores/adminInfo'
 import router from '/@/router'
-var timer: NodeJS.Timer
+import { useI18n } from 'vue-i18n'
+import { index } from '/@/api/frontend/index'
 
-const config = useConfig()
 const adminInfo = useAdminInfo()
+const siteConfig = useSiteConfig()
+
+const { t } = useI18n()
 
 const state = reactive({
-    showCaptcha: false,
+    showCaptcha: true,
     captchaId: uuid(),
 })
 
@@ -120,19 +105,15 @@ const onChangeCaptcha = () => {
 }
 
 const formRef = ref<InstanceType<typeof ElForm>>()
-const usernameRef = ref<InstanceType<typeof ElInput>>()
-const passwordRef = ref<InstanceType<typeof ElInput>>()
 const captchaRef = ref<InstanceType<typeof ElInput>>()
+
 const form = reactive({
     username: '',
     password: '',
     captcha: '',
     keep: false,
-    loading: false,
     captcha_id: '',
 })
-
-const { t } = useI18n()
 
 // 表单验证规则
 const rules = reactive({
@@ -173,47 +154,13 @@ const rules = reactive({
     ],
 })
 
-const focusInput = () => {
-    if (form.username === '') {
-        usernameRef.value!.focus()
-    } else if (form.password === '') {
-        passwordRef.value!.focus()
-    } else if (form.captcha === '') {
-        captchaRef.value!.focus()
-    }
-}
-
-onMounted(() => {
-    timer = setTimeout(() => {
-        pageBubble.init()
-    }, 1000)
-
-    login('get')
-        .then((res) => {
-            state.showCaptcha = res.data.captcha
-            nextTick(() => {
-                focusInput()
-            })
-        })
-        .catch((err) => {
-            console.log(err)
-        })
-})
-
-onBeforeUnmount(() => {
-    clearTimeout(timer)
-    pageBubble.removeListeners()
-})
-
 const onSubmit = (formEl: InstanceType<typeof ElForm> | undefined) => {
     if (!formEl) return
     formEl.validate((valid) => {
         if (valid) {
-            form.loading = true
             form.captcha_id = state.captchaId
             login('post', form)
                 .then((res) => {
-                    form.loading = false
                     adminInfo.dataFill(res.data.userinfo)
                     ElNotification({
                         message: res.msg,
@@ -223,7 +170,6 @@ const onSubmit = (formEl: InstanceType<typeof ElForm> | undefined) => {
                 })
                 .catch(() => {
                     onChangeCaptcha()
-                    form.loading = false
                 })
         } else {
             onChangeCaptcha()
@@ -231,118 +177,202 @@ const onSubmit = (formEl: InstanceType<typeof ElForm> | undefined) => {
         }
     })
 }
+
+index()
 </script>
 
 <style scoped lang="scss">
-.switch-language {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 1;
+* {
+    margin: 0;
+    padding: 0;
 }
-.bubble {
-    overflow: hidden;
-    background: url(/@/assets/bg.jpg) repeat;
-}
-.form-item-icon {
-    height: auto;
-}
-.login {
-    position: absolute;
-    top: 0;
-    display: flex;
-    width: 100vw;
-    height: 100vh;
-    align-items: flex-start;
-    justify-content: center;
-    .login-box {
-        overflow: hidden;
-        width: 430px;
-        padding: 0;
-        background: var(--ba-bg-color-overlay);
-        margin-top: 130px;
-    }
-    .head {
-        background: #ccccff;
-        img {
-            display: block;
-            width: 430px;
-            margin: 0 auto;
-            user-select: none;
+
+// 侧边栏
+.sidebar {
+    header {
+        max-width: 416px;
+        margin: 0 auto;
+        padding: 48px 20px 0px;
+        text-align: left;
+
+        a {
+            text-decoration: none;
+            .sidebar-logo-box {
+                display: none;
+            }
+        }
+
+        .sidebar-tagline {
+            display: none;
         }
     }
-    .form {
-        position: relative;
-        .profile-avatar {
-            display: block;
-            position: absolute;
-            height: 100px;
-            width: 100px;
-            border-radius: 50%;
-            border: 4px solid var(--ba-bg-color-overlay);
-            top: -50px;
-            right: calc(50% - 50px);
-            z-index: 2;
-            user-select: none;
-        }
-        .content {
-            padding: 100px 40px 40px 40px;
-        }
-        .submit-button {
-            width: 100%;
-            letter-spacing: 2px;
-            font-weight: 300;
-            margin-top: 15px;
-            --el-button-bg-color: var(--el-color-primary);
+
+    .sidebar-banner {
+        .sidebar-bg {
+            background-image: url(/@/assets/build-sky-bg.jpg);
+            flex-grow: 1;
+            background-repeat: no-repeat;
+            background-position: bottom center;
+            background-size: cover;
         }
     }
 }
 
-@media screen and (max-width: 720px) {
-    .login {
+.content {
+    main {
+        margin: 0 auto;
+        padding: 0 20px;
         display: flex;
-        align-items: center;
-        justify-content: center;
-        .login-box {
-            width: 340px;
-            margin-top: 0;
+
+        .content-main {
+            width: 100%;
+            max-width: 416px;
+            margin: auto;
+
+            .content-title {
+                margin: 35px 0 35px;
+                font: bold 24px/29px 'Haas Grot Text R Web', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            }
+
+            .content-hr {
+                margin-bottom: 17px;
+                :deep(.el-divider__text) {
+                    // #141414
+                    background-color: var(--ba-bg-color);
+                }
+            }
+
+            .content-label {
+                color: var(--el-text-color-primary);
+                margin-top: 20px;
+                font: bold 14px/24px 'Haas Grot Text R Web', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            }
+
+            .content-remenber {
+                margin-top: 20px;
+            }
+
+            .content-captcha {
+                display: flex;
+                width: 100%;
+                justify-content: space-between;
+
+                .content-captcha-input {
+                    max-width: 60%;
+                }
+
+                img {
+                    border-radius: 3px;
+                    max-width: 36%;
+                }
+            }
+
+            .el-button {
+                width: 100%;
+            }
         }
     }
 }
-.chang-lang :deep(.el-dropdown-menu__item) {
-    justify-content: center;
+
+@media only screen and (min-width: 960px) {
+    .main-container {
+        display: flex;
+        flex-direction: row;
+        height: 100%;
+        overflow: hidden;
+
+        .sidebar {
+            width: 450px;
+            background: #0085fe;
+            color: var(--el-color-white);
+            .sidebar-content {
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                height: 100%;
+
+                header {
+                    padding: 60px 50px 30px 40px;
+                    margin: 0;
+                    max-width: 100%;
+
+                    .sidebar-logo-box {
+                        display: flex;
+                        align-items: center;
+                        img {
+                            width: 25px;
+                            height: auto;
+                        }
+                        h3 {
+                            margin-left: 10px;
+                            color: var(--el-color-white);
+                        }
+                    }
+
+                    .sidebar-tagline {
+                        display: block;
+                        margin-top: 50px;
+                        font: bold 32px/38px 'Haas Grot Text R Web', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+                    }
+                }
+
+                .sidebar-banner {
+                    display: flex;
+                    flex-grow: 1;
+                    justify-content: flex-end;
+                    .sidebar-bg {
+                        max-height: 100%;
+                    }
+                }
+            }
+        }
+
+        .content {
+            display: flex;
+            flex: 1;
+            flex-direction: column;
+            overflow: auto;
+
+            main {
+                display: flex;
+                flex-grow: 1;
+                align-content: center;
+                justify-content: center;
+                align-items: center;
+                margin: 0;
+                padding: 0;
+
+                .content-main {
+                    margin: 0;
+                    padding: 30px 30px 0;
+
+                    .content-title {
+                        margin: 0 0 70px;
+                    }
+
+                    .content-hr {
+                        margin-bottom: 38px;
+                    }
+
+                    .content-login-btn {
+                        margin-top: 10px;
+                    }
+                }
+            }
+        }
+    }
 }
-.content :deep(.el-input__prefix) {
-    display: flex;
-    align-items: center;
-}
-.captcha-img {
-    width: 100%;
+
+@media only screen and (min-width: 1100px) {
+    .sidebar {
+        width: 514px !important;
+    }
 }
 
 // 暗黑样式
 @at-root .dark {
-    .bubble {
-        background: url(/@/assets/bg-dark.jpg) repeat;
-    }
-    .login {
-        .login-box {
-            background: #161b22;
-        }
-        .head {
-            img {
-                filter: brightness(61%);
-            }
-        }
-        .form {
-            .submit-button {
-                --el-button-bg-color: var(--el-color-primary-light-5);
-                --el-button-border-color: rgba(240, 252, 241, 0.1);
-            }
-        }
-    }
-    .captcha-img {
-        filter: brightness(61%);
+    .sidebar {
+        filter: brightness(70%);
     }
 }
 </style>

@@ -1,7 +1,6 @@
 <template>
     <div class="default-main ba-table-box">
         <el-alert class="ba-table-alert" v-if="baTable.table.remark" :title="baTable.table.remark" type="info" show-icon />
-
         <!-- 表格顶部菜单 -->
         <TableHeader
             :buttons="['refresh', 'add', 'edit', 'delete', 'comSearch', 'quickSearch', 'columnDisplay']"
@@ -19,7 +18,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, provide } from 'vue'
+import { ref, provide,markRaw } from 'vue'
 import baTableClass from '/@/utils/baTable'
 import { userUser } from '/@/api/controllerUrls'
 import PopupForm from './popupForm.vue'
@@ -28,6 +27,7 @@ import TableHeader from '/@/components/table/header/index.vue'
 import { defaultOptButtons } from '/@/components/table'
 import { baTableApi } from '/@/api/common'
 import { useI18n } from 'vue-i18n'
+import RealNameFieldRender from './realNameFieldRender.vue'
 
 const { t } = useI18n()
 const tableRef = ref()
@@ -47,41 +47,17 @@ const baTable = new baTableClass(
                 operatorPlaceholder: t('Fuzzy query'),
                 render: 'tag',
             },
+            { label: t('user.user.balance'), prop: 'money', align: 'center', operator: 'RANGE', sortable: 'custom' },
             { label: t('user.user.head portrait'), prop: 'avatar', align: 'center', render: 'image', operator: false },
-            {
-                label: t('user.user.Gender'),
-                prop: 'gender',
-                align: 'center',
-                render: 'tag',
-                custom: { '0': 'info', '1': '', '2': 'success' },
-                replaceValue: { '0': t('unknown'), '1': t('user.user.male'), '2': t('user.user.female') },
-            },
             { label: t('user.user.mobile'), prop: 'mobile', align: 'center', operator: 'LIKE', operatorPlaceholder: t('Fuzzy query') },
             {
-                label: t('user.user.Last login IP'),
-                prop: 'lastloginip',
+                label: t('实名状态'),
+                prop: 'realname',
                 align: 'center',
+                width: '170',
                 operator: 'LIKE',
-                operatorPlaceholder: t('Fuzzy query'),
-                render: 'tag',
-            },
-            {
-                label: t('user.user.Last login'),
-                prop: 'lastlogintime',
-                align: 'center',
-                render: 'datetime',
-                sortable: 'custom',
-                operator: 'RANGE',
-                width: 160,
-            },
-            { label: t('createtime'), prop: 'createtime', align: 'center', render: 'datetime', sortable: 'custom', operator: 'RANGE', width: 160 },
-            {
-                label: t('state'),
-                prop: 'status',
-                align: 'center',
-                render: 'tag',
-                custom: { disable: 'danger', enable: 'success' },
-                replaceValue: { disable: t('Disable'), enable: t('Enable') },
+                render: 'customRender',
+                customRender:markRaw(RealNameFieldRender)
             },
             {
                 label: t('operate'),

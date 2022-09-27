@@ -1,4 +1,6 @@
 export default {
+    'Welcome': '欢迎',
+    'Sign in to': '登录到',
     'Please enter an account': '请输入账号',
     'Please input a password': '请输入密码',
     'Please enter the verification code': '请输入验证码',

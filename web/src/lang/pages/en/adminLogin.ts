@@ -1,4 +1,6 @@
 export default {
+    'Welcome': "Welcome",
+    'Sign in to': 'Sign in to',
     'Please enter an account': 'Please enter your account',
     'Please input a password': 'Please enter your password',
     'Please enter the verification code': 'Please enter the Captcha',

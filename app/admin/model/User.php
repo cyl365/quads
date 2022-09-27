@@ -42,4 +42,10 @@ class User extends Model
     {
         return $this->belongsTo(UserGroup::class, 'group_id');
     }
+
+    // 用户实名
+    public function realname()
+    {
+        return $this->hasOne(UserRealname::class,'uid')->append(['realname_status']);
+    }
 }

@@ -5,7 +5,7 @@
 
 return [
     // 允许跨域访问的域名
-    'cors_request_domain'  => 'localhost,127.0.0.1',
+    'cors_request_domain'  => '*',
     // 是否开启管理员登录验证码
     'admin_login_captcha'  => true,
     // 会员登录失败可重试次数,false则无限
@@ -21,7 +21,7 @@ return [
         // 默认驱动方式
         'default' => 'mysql',
         // 加密key
-        'key'     => 'tcbDgmqLVzuAdNH39o0QnhOisvSCFZ7I',
+        'key'     => 'qefwGxnUPys79IKZitFcl8DMkavbSdEX',
         // 加密方式
         'algo'    => 'ripemd160',
         // 驱动

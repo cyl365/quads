@@ -40,6 +40,7 @@ class User extends Backend
         list($where, $alias, $limit, $order) = $this->queryBuilder();
         $res = $this->model
             ->withoutField('password,salt')
+            ->with('realname')
             ->withJoin($this->withJoinTable, $this->withJoinType)
             ->alias($alias)
             ->where($where)
@@ -142,4 +143,5 @@ class User extends Backend
             'remark' => get_route_remark(),
         ]);
     }
+
 }
